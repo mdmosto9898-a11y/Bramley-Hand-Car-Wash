@@ -1,0 +1,212 @@
+{
+  "entities": {
+    "Booking": {
+      "title": "Booking",
+      "description": "Customer detailing appointment booking request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["new", "pending", "confirmed", "completed", "cancelled"]
+        },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "customerEmail": { "type": "string", "format": "email", "maxLength": 100 },
+        "vehicleMakeModel": { "type": "string", "maxLength": 100 },
+        "vehicleType": { "type": "string", "maxLength": 50 },
+        "serviceName": { "type": "string", "maxLength": 100 },
+        "serviceId": { "type": "string", "maxLength": 64 },
+        "preferredDate": { "type": "string", "maxLength": 20 },
+        "preferredTime": { "type": "string", "maxLength": 20 },
+        "locationPostcode": { "type": "string", "maxLength": 20 },
+        "address": { "type": "string", "maxLength": 255 },
+        "additionalNotes": { "type": "string", "maxLength": 1000 },
+        "estimatedPrice": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["customerName", "customerPhone", "serviceName", "preferredDate", "status"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Car wash and detailing service catalogue offering",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "enum": ["interior", "exterior", "paint", "specialist"] },
+        "shortDesc": { "type": "string", "maxLength": 255 },
+        "fullDesc": { "type": "string", "maxLength": 2000 },
+        "startingPrice": { "type": "number" },
+        "priceDisplay": { "type": "string", "maxLength": 30 },
+        "duration": { "type": "string", "maxLength": 50 },
+        "image": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["active", "disabled"] },
+        "features": { "type": "array" },
+        "recommendedFor": { "type": "string", "maxLength": 255 }
+      },
+      "required": ["name", "startingPrice", "duration", "status"]
+    },
+    "PricingPackage": {
+      "title": "PricingPackage",
+      "description": "Standardized pricing packages across vehicle tiers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "vehicleType": { "type": "string", "maxLength": 50 },
+        "startingPrice": { "type": "number" },
+        "priceDisplay": { "type": "string", "maxLength": 30 },
+        "description": { "type": "string", "maxLength": 500 },
+        "includedServices": { "type": "array" },
+        "status": { "type": "string", "enum": ["active", "disabled"] }
+      },
+      "required": ["name", "vehicleType", "startingPrice", "status"]
+    },
+    "GalleryItem": {
+      "title": "GalleryItem",
+      "description": "Showcase portfolio photographs from Bramley workshop",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 500 },
+        "beforeImage": { "type": "string", "maxLength": 1000 },
+        "afterImage": { "type": "string", "maxLength": 1000 },
+        "featured": { "type": "boolean" },
+        "isDemoPlaceholder": { "type": "boolean" },
+        "uploadedAt": { "type": "string" },
+        "storagePath": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["title", "afterImage", "category"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer testimonials and ratings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "rating": { "type": "number" },
+        "reviewText": { "type": "string", "maxLength": 1500 },
+        "date": { "type": "string", "maxLength": 30 },
+        "featured": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["published", "pending", "hidden"] },
+        "isDemo": { "type": "boolean" },
+        "source": { "type": "string", "maxLength": 50 },
+        "published": { "type": "boolean" }
+      },
+      "required": ["customerName", "rating", "reviewText", "status"]
+    },
+    "ServiceArea": {
+      "title": "ServiceArea",
+      "description": "Geographical coverage and postcodes around Leeds",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "county": { "type": "string", "maxLength": 100 },
+        "postcodes": { "type": "array" },
+        "isPrimary": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["active", "disabled"] },
+        "travelNote": { "type": "string", "maxLength": 255 }
+      },
+      "required": ["name", "status"]
+    },
+    "FAQ": {
+      "title": "FAQ",
+      "description": "Frequently asked customer queries and answers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "question": { "type": "string", "maxLength": 255 },
+        "answer": { "type": "string", "maxLength": 2000 },
+        "category": { "type": "string", "maxLength": 50 },
+        "order": { "type": "number" },
+        "published": { "type": "boolean" }
+      },
+      "required": ["question", "answer", "published"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Inbound enquiries from the customer contact form",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "format": "email", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "subject": { "type": "string", "maxLength": 150 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "date": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "maxLength": 30 },
+        "status": { "type": "string", "enum": ["new", "unread", "read", "replied", "archived"] },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["name", "email", "message"]
+    },
+    "BusinessSettings": {
+      "title": "BusinessSettings",
+      "description": "Global operational contact, address, branding and TikTok metadata",
+      "type": "object",
+      "properties": {
+        "businessName": { "type": "string", "maxLength": 150 },
+        "businessDescription": { "type": "string", "maxLength": 1000 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "email": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 300 },
+        "openingHours": { "type": "string", "maxLength": 200 },
+        "logoUrl": { "type": "string", "maxLength": 1000 },
+        "instagram": { "type": "string", "maxLength": 255 },
+        "facebook": { "type": "string", "maxLength": 255 },
+        "tiktok": { "type": "string", "maxLength": 255 },
+        "tiktokUrl": { "type": "string", "maxLength": 255 },
+        "whatsapp": { "type": "string", "maxLength": 255 },
+        "googleBusinessUrl": { "type": "string", "maxLength": 500 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "currencySymbol": { "type": "string", "maxLength": 10 },
+        "seoTitle": { "type": "string", "maxLength": 150 },
+        "seoDescription": { "type": "string", "maxLength": 300 }
+      }
+    }
+  },
+  "firestore": {
+    "/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/Booking" },
+      "description": "Customer booking appointments"
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/Service" },
+      "description": "Detaling and car wash service catalogue"
+    },
+    "/pricing/{packageId}": {
+      "schema": { "$ref": "#/entities/PricingPackage" },
+      "description": "Standard vehicle pricing packages"
+    },
+    "/gallery/{imageId}": {
+      "schema": { "$ref": "#/entities/GalleryItem" },
+      "description": "Photo showcase before and after items"
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Verified client reviews and feedback"
+    },
+    "/serviceAreas/{areaId}": {
+      "schema": { "$ref": "#/entities/ServiceArea" },
+      "description": "Coverage zones and postcode clusters"
+    },
+    "/faqs/{faqId}": {
+      "schema": { "$ref": "#/entities/FAQ" },
+      "description": "Frequently asked questions"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Customer website enquiries"
+    },
+    "/businessSettings/{docId}": {
+      "schema": { "$ref": "#/entities/BusinessSettings" },
+      "description": "Global business configuration document"
+    }
+  }
+}

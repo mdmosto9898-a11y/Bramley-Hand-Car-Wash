@@ -1,0 +1,6 @@
+{
+  "name": "Bramley Hand Car Wash | Car Wash & Valeting in Leeds",
+  "description": "Bramley Hand Car Wash in Bramley, Leeds. Professional hand car washing and valeting services at 601 Stanningley Rd.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

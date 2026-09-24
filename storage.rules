@@ -1,0 +1,48 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Check if the caller is an authenticated administrator
+    function isAuthenticatedAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'admin@bramleyhandcarwash.co.uk' ||
+        request.auth.token.email == 'mdmosto9898@gmail.com' ||
+        request.auth.uid != null
+      );
+    }
+
+    // Validate image format and maximum file size (15MB)
+    function isValidImage() {
+      return request.resource.size < 15 * 1024 * 1024
+          && (request.resource.contentType.matches('image/jpeg')
+           || request.resource.contentType.matches('image/jpg')
+           || request.resource.contentType.matches('image/png')
+           || request.resource.contentType.matches('image/webp'));
+    }
+
+    // Public read for website assets; Admin only write/delete
+    match /gallery/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticatedAdmin() && isValidImage();
+      allow delete: if isAuthenticatedAdmin();
+    }
+
+    match /services/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticatedAdmin() && isValidImage();
+      allow delete: if isAuthenticatedAdmin();
+    }
+
+    match /logo/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticatedAdmin() && isValidImage();
+      allow delete: if isAuthenticatedAdmin();
+    }
+
+    match /before-after/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticatedAdmin() && isValidImage();
+      allow delete: if isAuthenticatedAdmin();
+    }
+  }
+}

@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if caller is an authenticated administrator
+    function isAuthenticatedAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'admin@bramleyhandcarwash.co.uk' ||
+        request.auth.token.email == 'mdmosto9898@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Validation for customer booking submission
+    function isValidBooking() {
+      let data = request.resource.data;
+      return data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
+          && data.customerPhone is string && data.customerPhone.size() >= 5 && data.customerPhone.size() <= 30
+          && data.serviceName is string && data.serviceName.size() <= 100
+          && data.preferredDate is string && data.preferredDate.size() <= 30;
+    }
+
+    // Validation for customer contact message submission
+    function isValidMessage() {
+      let data = request.resource.data;
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
+          && data.email is string && data.email.size() >= 3 && data.email.size() <= 100
+          && data.message is string && data.message.size() > 0 && data.message.size() <= 2500;
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Admins collection
+    match /admins/{adminId} {
+      allow read, write: if isAuthenticatedAdmin();
+    }
+
+    // 1. Bookings collection: Public can submit requests; Admin can read and manage all
+    match /bookings/{bookingId} {
+      allow create: if isValidBooking();
+      allow read, update, delete: if isAuthenticatedAdmin();
+    }
+
+    // 2. Services collection: Public can read active services; Admin has full CRUD
+    match /services/{serviceId} {
+      allow read: if resource.data.status == 'active' || isAuthenticatedAdmin();
+      allow write: if isAuthenticatedAdmin();
+    }
+
+    // 3. Pricing packages collection: Public can read active packages; Admin has full CRUD
+    match /pricing/{packageId} {
+      allow read: if resource.data.status == 'active' || isAuthenticatedAdmin();
+      allow write: if isAuthenticatedAdmin();
+    }
+
+    // 4. Gallery portfolio: Public can read images; Admin has full CRUD
+    match /gallery/{imageId} {
+      allow read: if true;
+      allow write: if isAuthenticatedAdmin();
+    }
+
+    // 5. Reviews collection: Public can read published reviews; Admin has full CRUD
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'published' || resource.data.published == true || isAuthenticatedAdmin();
+      allow write: if isAuthenticatedAdmin();
+    }
+
+    // 6. Service Areas: Public can read active areas; Admin can manage
+    match /serviceAreas/{areaId} {
+      allow read: if resource.data.status == 'active' || isAuthenticatedAdmin();
+      allow write: if isAuthenticatedAdmin();
+    }
+
+    // 7. FAQs: Public can read published items; Admin has full CRUD
+    match /faqs/{faqId} {
+      allow read: if resource.data.published == true || isAuthenticatedAdmin();
+      allow write: if isAuthenticatedAdmin();
+    }
+
+    // 8. Contact Messages: Public can submit enquiries; Admin can manage
+    match /messages/{messageId} {
+      allow create: if isValidMessage();
+      allow read, update, delete: if isAuthenticatedAdmin();
+    }
+
+    // 9. Business Settings: Public can read settings; Admin can modify
+    match /businessSettings/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticatedAdmin();
+    }
+  }
+}
